@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pomodoro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="header-title">Pomodoro</h1>
+    </header>
+    <main class="main">
+        <div class="timer-panel">
+            <div class="sessions">
+                <span class="focus session" data-current-session>Focus</span>
+                <span class="short-break session">Short Break</span>
+                <span class="long-break session">Long Break</span>
+            </div>
+            <div class="timer">
+                <span class="minutes timer-text">25</span>
+                <span class=" timer-text">:</span>
+                <span class="seconds timer-text">00</span>
+            </div>
+            <div class="timer-control">
+                <button class="start-stop control-button" type="button">
+                    Start
+                </button>
+                <button class="skip control-button" type="button">
+                    Skip
+                </button>
+                <button class="reset control-button" type="button">
+                    Reset
+                </button>
+            </div>
+        </div>
+        <div class="pomodoro-options">
+            <div class="time-options">
+                <label for="focus-time"> Focus Time:
+                    <input type="number" class="time-input focus-time" id="focus-time" max="60" min="1" value="25">
+                </label>
+                <label for="short-break-time"> Short Break Time:
+                    <input type="number" class="time-input short-break-time" id="short-break-time" max="60" min="1" value="5">
+                </label>
+                <label for="long-break-time"> Long Break Time:
+                    <input type="number" class="time-input long-break-time" id="long-break-time" max="60" min="1" value="10">
+                </label>
+                <button class="submit-options">Submit</button>
+            </div>
+        </div>
+    </main>
+    <script src="index.js"></script>
+</body>
+</html>
