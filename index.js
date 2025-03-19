@@ -1,39 +1,70 @@
 const bell = new Audio('./audio/bell.mp3');
 
-let sessions = {
+const sessions = {
     focus: document.querySelector('.focus'),
     shortBreak: document.querySelector('.short-break'),
     longBreak: document.querySelector('.long-break'),
 };
 
-let timerMinutes = document.querySelector('.minutes');
-let timerSeconds = document.querySelector('.seconds');
+const timerMinutes = document.querySelector('.minutes');
+const timerSeconds = document.querySelector('.seconds');
 
-let controls = {
+const controls = {
     start_stop: document.querySelector('.start-stop'),
     skip: document.querySelector('.skip'),
     reset: document.querySelector('.reset'),
 };
 
+const timeSettingsElems = {
+    focusTimeSetting: document.querySelector('.focus-time'),
+    shortBreakTimeSetting: document.querySelector('.short-break-time'),
+    longBreakTimeSetting: document.querySelector('.long-break-time'),
+    longBreakInterval: document.querySelector('.long-break-interval'),
+    timeSettingSubmitting: document.querySelector('.submit-options'),
+};
+
+let allSessionsElem = document.querySelector('.session-counter-number');
+allSessionsElem.textContent = 1;
+
 let focusTime = 25 * 60;
 let shortBreakTime = 5 * 60;
 let longBreakTime = 10 * 60;
 let currentTimerTime = focusTime;
-let timerID;
+let timerID = null;
 let currentSession = sessions.focus;
 let sessionCounter = 0;
+let allSessions = 1;
 
-let timeSettingsElems = {
-    focusTimeSetting: document.querySelector('.focus-time'),
-    shortBreakTimeSetting: document.querySelector('.short-break-time'),
-    longBreakTimeSetting: document.querySelector('.long-break-time'),
-    timeSettingSubmitting: document.querySelector('.submit-options'),
+const validateInputs = () => {
+    const inputs = [
+        timeSettingsElems.focusTimeSetting,
+        timeSettingsElems.shortBreakTimeSetting,
+        timeSettingsElems.longBreakTimeSetting,
+        timeSettingsElems.longBreakInterval
+    ];
+
+    let valid = true;
+
+    inputs.forEach(input => {
+        let value = parseInt(input.value);
+
+        if (isNaN(value) || value < 1 || value > 60) {
+            valid = false;
+            input.style.border = '2px solid red';
+        } else {
+            input.style.border = '2px solid green';
+        }
+    });
+
+    timeSettingsElems.timeSettingSubmitting.disabled = !valid;
 };
 
 timeSettingsElems.timeSettingSubmitting.addEventListener('click', () => {
-    focusTime = parseInt(timeSettingsElems.focusTimeSetting.value) * 60 || 1500;
-    shortBreakTime = parseInt(timeSettingsElems.shortBreakTimeSetting.value) * 60 || 300;
-    longBreakTime = parseInt(timeSettingsElems.longBreakTimeSetting.value) * 60 || 600;
+    if (timeSettingsElems.timeSettingSubmitting.disabled) return;
+
+    focusTime = parseInt(timeSettingsElems.focusTimeSetting.value) * 60;
+    shortBreakTime = parseInt(timeSettingsElems.shortBreakTimeSetting.value) * 60;
+    longBreakTime = parseInt(timeSettingsElems.longBreakTimeSetting.value) * 60;
 
     currentTimerTime = (currentSession === sessions.focus) ? focusTime :
         (currentSession === sessions.shortBreak) ? shortBreakTime :
@@ -42,40 +73,48 @@ timeSettingsElems.timeSettingSubmitting.addEventListener('click', () => {
     setTimerTime(currentTimerTime);
 });
 
-controls.start_stop.addEventListener('click', (event) => {
-    if (event.currentTarget.textContent.trim() === 'Start') {
-        event.currentTarget.textContent = 'Stop';
-        timerID = setInterval(() => {
-            startTimer();
-            if (currentTimerTime <= 0) {
-                clearInterval(timerID);
-                changeSession();
-                bell.play();
-            }
-        }, 1000);
+Object.values(timeSettingsElems).forEach(input => {
+    if (input.tagName === 'INPUT') {
+        input.addEventListener('input', validateInputs);
+    }
+});
+
+controls.start_stop.addEventListener('click', () => {
+    if (!timerID) {
+        startTimer();
+        controls.start_stop.textContent = 'Stop';
     } else {
-        event.currentTarget.textContent = 'Start';
-        clearInterval(timerID);
+        stopTimer();
     }
 });
 
 controls.skip.addEventListener('click', () => {
-    clearInterval(timerID);
+    stopTimer();
     changeSession();
 });
 
 controls.reset.addEventListener('click', () => {
-    clearInterval(timerID);
-    currentTimerTime = (currentSession === sessions.focus) ? focusTime :
-        (currentSession === sessions.shortBreak) ? shortBreakTime :
-            longBreakTime;
-    setTimerTime(currentTimerTime);
-    controls.start_stop.textContent = 'Start';
+    stopTimer();
+    resetSession();
 });
 
 function startTimer() {
-    currentTimerTime--;
-    setTimerTime(currentTimerTime);
+    timerID = setInterval(() => {
+        if (currentTimerTime <= 0) {
+            stopTimer();
+            changeSession();
+            bell.play();
+        } else {
+            currentTimerTime--;
+            setTimerTime(currentTimerTime);
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerID);
+    timerID = null;
+    controls.start_stop.textContent = 'Start';
 }
 
 function setTimerTime(time) {
@@ -84,21 +123,32 @@ function setTimerTime(time) {
 }
 
 function changeSession() {
-    controls.start_stop.textContent = 'Start';
+    sessionCounter++;
 
     if (currentSession === sessions.focus) {
-        sessionCounter++;
-        currentSession = (sessionCounter >= 4) ? sessions.longBreak : sessions.shortBreak;
+        currentSession = (sessionCounter >= parseInt(timeSettingsElems.longBreakInterval.value)) ? sessions.longBreak : sessions.shortBreak;
     } else {
         currentSession = sessions.focus;
+        allSessions++;
+        allSessionsElem.textContent = allSessions;
     }
 
-    Object.values(sessions).forEach(session => session.removeAttribute('data-current-session'));
-    currentSession.setAttribute('data-current-session', '');
+    sessionCounter = (currentSession === sessions.longBreak) ? 0 : sessionCounter;
 
+    updateSessionDisplay();
+}
+
+function resetSession() {
     currentTimerTime = (currentSession === sessions.focus) ? focusTime :
         (currentSession === sessions.shortBreak) ? shortBreakTime :
             longBreakTime;
 
     setTimerTime(currentTimerTime);
+}
+
+function updateSessionDisplay() {
+    Object.values(sessions).forEach(session => session.removeAttribute('data-current-session'));
+    currentSession.setAttribute('data-current-session', '');
+
+    resetSession();
 }

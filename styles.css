@@ -1,289 +1,205 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-/**
-  Нормализация блочной модели
- */
-*,
-::before,
-::after {
-    box-sizing: border-box;
-}
-
-/**
-  Убираем внутренние отступы слева тегам списков,
-  у которых есть атрибут class
- */
-:where(ul, ol):where([class]) {
-    padding-left: 0;
-}
-
-/**
-  Убираем внешние отступы body и двум другим тегам,
-  у которых есть атрибут class
- */
-body,
-:where(blockquote, figure):where([class]) {
-    margin: 0;
-}
-
-/**
-  Убираем внешние отступы вертикали нужным тегам,
-  у которых есть атрибут class
- */
-:where(
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  ul,
-  ol,
-  dl
-):where([class]) {
-    margin-block: 0;
-}
-
-:where(dd[class]) {
-    margin-left: 0;
-}
-
-:where(fieldset[class]) {
-    margin-left: 0;
-    padding: 0;
-    border: none;
-
-}
-
-/**
-  Убираем стандартный маркер маркированному списку,
-  у которого есть атрибут class
- */
-:where(ul[class]) {
-    list-style: none;
-}
-
-:where(address[class]) {
-    font-style: normal;
-}
-
-/**
-  Обнуляем вертикальные внешние отступы параграфа,
-  объявляем локальную переменную для внешнего отступа вниз,
-  чтобы избежать взаимодействие с более сложным селектором
- */
-p {
-    --paragraphMarginBottom: 24px;
-
-    margin-block: 0;
-}
-
-/**
-  Внешний отступ вниз для параграфа без атрибута class,
-  который расположен не последним среди своих соседних элементов
- */
-p:where(:not([class]):not(:last-child)) {
-    margin-bottom: var(--paragraphMarginBottom);
-}
-
-
-/**
-  Упрощаем работу с изображениями
- */
-img {
-    display: block;
-    max-width: 100%;
-}
-
-/**
-  Наследуем свойства шрифт для полей ввода
- */
-input,
-textarea,
-select,
-button {
-    font: inherit;
-}
-
-html {
-    /**
-      Пригодится в большинстве ситуаций
-      (когда, например, нужно будет "прижать" футер к низу сайта)
-     */
-    height: 100%;
-}
-
-/**
-  Плавный скролл
- */
-html,
-:has(:target) {
-    scroll-behavior: smooth;
-}
-
-body {
-    /**
-      Пригодится в большинстве ситуаций
-      (когда, например, нужно будет "прижать" футер к низу сайта)
-     */
-    min-height: 100%;
-    /**
-      Унифицированный интерлиньяж
-     */
-    line-height: 1.5;
-}
-
-/**
-  Приводим к единому цвету svg-элементы
- */
-svg *[fill] { fill: currentColor }
-svg *[stroke] { stroke: currentColor }
-
-/**
-  Чиним баг задержки смены цвета при взаимодействии с svg-элементами
- */
-svg * {
-    transition-property: fill, stroke;
-}
-
-/**
-  Удаляем все анимации и переходы для людей,
-  которые предпочитают их не использовать
- */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    ::before,
-    ::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;400;700&display=swap');
 
 :root {
-    --color-green: #4CAF50;
-    --color-red: #D7263D;
+    --color-primary: #ff6b6b;
+    --color-secondary: #4ECDC4;
+    --color-dark: #1e1e1e;
+    --color-light: #f9f9f9;
     --color-gray: #5E6472;
-    --color-dark: #222831;
-    --color-light: #F4F4F4;
 
-    --transition-duration: 200ms;
+    --border-radius: 12px;
+    --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 6px 20px rgba(0, 0, 0, 0.2);
+
+    --transition: 0.3s ease-in-out;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: Nunito, sans-serif;
-    font-size: 20px;
-    font-weight: bold;
+    font-family: 'Nunito', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
     background-color: var(--color-light);
+    color: var(--color-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
 }
+
 
 .header-title {
     text-align: center;
-    padding: 20px;
+    font-size: 36px;
+    font-weight: 700;
     color: var(--color-dark);
+    margin-bottom: 30px;
 }
+
 
 .main {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    row-gap: 100px;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 900px;
+}
+
+
+.timer-panel,
+.time-options {
+    background: white;
+    padding: 20px 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.session-counter {
+    font-weight: bold;
+    margin-top: 20px;
 
 }
 
-.timer-panel {
+.time-options>label {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 40px;
-    border-radius: 10px;
-    background-color: var(--color-red);
-    color: white;
-
+    column-gap: 20px;
 }
+
+.timer-panel:hover,
+.time-options:hover {
+    box-shadow: var(--shadow-heavy);
+}
+
 
 .sessions {
     display: flex;
-    column-gap: 20px;
-
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 .session {
-    background-color: var(--color-dark);
-    padding: 5px 10px;
-    border-radius: 10px;
-    opacity: 0.5;
+    background-color: var(--color-gray);
+    color: white;
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    opacity: 0.6;
+    transition: var(--transition);
 }
 
 [data-current-session] {
     opacity: 1;
+    background-color: var(--color-primary);
 }
+
 
 .timer {
-    font-size: 82px;
-    padding-block: 40px;
-
+    font-size: 72px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: var(--color-dark);
 }
+
 
 .timer-control {
     display: flex;
-    column-gap: 15px;
+    justify-content: center;
+    gap: 15px;
 }
 
 .control-button {
-    position: relative;
-    background-color: var(--color-light);
-    color: var(--color-red);
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
     border: none;
-    border-radius: 10px;
-    font-size: 24px;
-    padding-inline: 15px;
-    box-shadow: 0 8px 0 #b71c1c;
-}
-
-.control-button:active {
-    transform: translateY(4px);
-    box-shadow: 0 1px 0 #b71c1c;
+    border-radius: var(--border-radius);
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 0 #b71c1c;
 }
 
 .control-button:hover {
-    cursor: pointer;
+    background-color: #e63946;
+    transform: translateY(-2px);
 }
 
-.time-options {
-    display: flex;
-    column-gap: 20px;
-    padding: 20px 40px;
-    border-radius: 10px;
-    background-color: var(--color-red);
-    color: white;
+.control-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #b71c1c;
+}
 
+
+.time-options {
+    background: white;
+    padding: 30px;
+}
+
+.time-options label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-weight: 700;
 }
 
 .time-input {
-    border-radius: 5px;
-    border: none;
-    vertical-align: middle;
+    width: 60px;
+    padding: 8px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-gray);
+    text-align: center;
+    font-size: 16px;
 }
 
 .submit-options {
-    border-radius: 5px;
-    background-color: #32CD32;
-    border: none;
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: var(--color-secondary);
     color: white;
-    font-size: 20px;
-    box-shadow: 0 6px 0 #228B22;
-    transition: all 0.1s ease-in-out;
-}
-
-.submit-options:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #228B22;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 0 #008f8c;
 }
 
 .submit-options:hover {
-    cursor: pointer;
+    background-color: #3dc9b3;
+    transform: translateY(-2px);
+}
+
+.submit-options:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #008f8c;
 }
 
 
+@media (max-width: 768px) {
+    .main {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timer-panel,
+    .time-options {
+        max-width: 100%;
+    }
+}
