@@ -35,7 +35,11 @@
                     Reset
                 </button>
             </div>
+            <div class="session-counter">
+                Session #<span class="session-counter-number"></span>
+            </div>
         </div>
+
         <div class="pomodoro-options">
             <div class="time-options">
                 <label for="focus-time"> Focus Time:
@@ -46,6 +50,9 @@
                 </label>
                 <label for="long-break-time"> Long Break Time:
                     <input type="number" class="time-input long-break-time" id="long-break-time" max="60" min="1" value="10">
+                </label>
+                <label for="long-break-interval"> Long Break Interval:
+                    <input type="number" class="time-input long-break-interval" id="long-break-interval" min="1" value="2">
                 </label>
                 <button class="submit-options">Submit</button>
             </div>
