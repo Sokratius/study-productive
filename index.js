@@ -126,7 +126,7 @@ function changeSession() {
     sessionCounter++;
 
     if (currentSession === sessions.focus) {
-        currentSession = (sessionCounter >= parseInt(timeSettingsElems.longBreakInterval.value)) ? sessions.longBreak : sessions.shortBreak;
+        currentSession = (sessionCounter >= parseInt(timeSettingsElems.longBreakInterval.value)+3) ? sessions.longBreak : sessions.shortBreak;
     } else {
         currentSession = sessions.focus;
         allSessions++;
